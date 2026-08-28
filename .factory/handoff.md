@@ -1,7 +1,7 @@
 # Bike Service Timeline — polish 1 handoff
 
 - Work order: `bike-service-timeline-polish-1`
-- Repair commits: `5aae0f48816f4f28f34eb46b37e5d6ca7296b5f1`, `03849d4`, `90c733a`
+- Repair commits: `5aae0f48816f4f28f34eb46b37e5d6ca7296b5f1`, `03849d4`, `90c733a`; evidence handoff: `91da2a0`
 - Live URL: <https://bike-service-timeline.sociobot.in>
 - Deployed: 2026-08-28 UTC via `/opt/fleet/lib/deploy-static.sh`
 
