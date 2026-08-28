@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Bike Service Timeline icon">
+  <rect width="512" height="512" rx="112" fill="#17372f"/>
+  <path d="M92 366h328v38H92z" fill="#e6a327"/>
+  <circle cx="148" cy="300" r="74" fill="#f3ead8" stroke="#fffdf7" stroke-width="22"/>
+  <circle cx="364" cy="300" r="74" fill="#f3ead8" stroke="#fffdf7" stroke-width="22"/>
+  <path d="M148 300l72-108 54 108H148zm72-108h74l70 108M195 230l-30-54h-38m137 0h52" fill="none" stroke="#78d2b3" stroke-width="24" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M80 80h230v82H80z" fill="#fffdf7"/>
+  <path d="M106 106h142M106 136h92" stroke="#254f70" stroke-width="16" stroke-linecap="round"/>
+  <path d="M310 80l54 41-54 41z" fill="#e6a327"/>
+</svg>
