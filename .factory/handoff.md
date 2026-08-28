@@ -1,86 +1,68 @@
-# Bike Service Timeline — build handoff
+# Bike Service Timeline — independent verification handoff
 
-- Work order: `bike-service-timeline-build-1`
-- Completed: 2026-08-28
-- Deploy type: static PWA
-Deploy root: `dist/` (`dist/index.html` is present)
+- Work order: `bike-service-timeline-verify-1`
+- Candidate: `445eafa245297b837202c292d2118d427d9b8fbc`
+- Live URL: <https://bike-service-timeline.sociobot.in>
+- Verified: 2026-08-28 UTC
+- Final result: **FAIL**
 
-## What was built
+## Outcome
 
-- A complete local-first bike maintenance record using TypeScript, Vite, and
-  native IndexedDB. Users can add/edit/delete bikes, manage component baselines
-  and custom time/distance intervals, and log dated work with mileage, cost,
-  workshop, notes, photos, or receipts.
-- A calculated all-bike next-service bench and one searchable chronological
-  history with bike filtering, CSV download, and print styling. Interval copy
-  explicitly says reminders are not safety certification.
-- Full JSON backup, merge/replace restore, and local deletion behavior. Import
-  validates the product/schema and resolves matching IDs by latest `updatedAt`.
-- Installable offline PWA with 192/512 maskable icons, a versioned generated
-  precache, navigation fallback, asset caching, install splash colours, and an
-  in-app update prompt. Offline viewing and new local records do not depend on
-  a server.
-- A genuinely useful two-bike free tier. The US$19 one-time Workshop Pass uses
-  the required slug-based Sociobot checkout, return-token storage, background
-  daily verification, cached offline verdict, restore-license form, and quiet
-  invalid-license notice. It unlocks unlimited bikes and file attachments;
-  accessibility, safety copy, CSV, print, and JSON backup are never gated.
-- Product-specific light/dark paper-cut workshop UI with original generated
-  art, responsive 390 px layout, keyboard-native dialogs/forms, focus states,
-  reduced-motion behavior, empty/error/offline/update states, and semantic
-  landmarks.
-- Privacy and terms pages, full README, MIT license, manifest, robots file, and
-  sitemap. No analytics, remote fonts, runtime CDNs, accounts, or sync.
+The candidate builds cleanly, passes its repository tests, and the live site is
+the exact candidate artifact. Core happy paths, local persistence, exports,
+desktop/mobile layouts, keyboard use, axe checks, offline writes/reloads, PWA
+installability, and the service-worker update flow were verified successfully.
 
-## Verification
+Release is blocked by these defects:
 
-Commands run from `/work/repo`:
+1. **High:** the live Workshop Pass checkout returns HTTP 404, making unlimited
+   bikes and receipt/photo attachments impossible to purchase.
+2. **High:** a correctly branded but semantically malformed v1 backup is
+   persisted; opening Bench then throws `Invalid time value`, and reloads remain
+   on the fatal screen until site data is cleared.
+3. **Medium:** 2026-01-31 plus a one-month interval is shown as 2026-03-03 rather
+   than clamped to 2026-02-28.
+4. **Medium:** a later component service with no odometer rewinds the distance
+   baseline to installation mileage (observed 2,800 km becoming 2,000 km).
+5. **Medium:** several 390 px mobile legal/footer targets measure only 15–21 px
+   high, below the required 44 px.
+6. **Medium:** fingerprinted assets are served with 30-second revalidation, not
+   long-lived immutable caching.
+7. **Low:** CSP and Permissions Policy are absent; manifest and AVIF responses
+   use `application/octet-stream`.
+
+Full reproduction steps and evidence are in
+[`.factory/verification.md`](./verification.md).
+
+## Verification commands and results
+
+From a detached clean worktree at the candidate SHA:
 
 ```sh
+npm ci
 npm test
-npm run test:e2e
 npm run build
-npm audit
+npm run test:e2e
+npx tsc --noEmit
+npm audit --audit-level=moderate
 ```
 
-Results:
+- Vitest: 4 passed.
+- Playwright: 6 passed, 2 intentional viewport skips.
+- Build/type check: passed; `dist/index.html` produced.
+- Audit: 0 vulnerabilities.
+- No lint command exists.
+- Axe: 0 serious/critical findings across tested empty, dialog, pass, populated,
+  light, dark, desktop, and mobile states.
+- Live Lighthouse mobile, three runs: 95/99/94 performance (median 95); full run
+  100 accessibility, 100 best practices, 100 SEO; median LCP 1.80 s, CLS 0.
+- Payloads: 38.47 KB JS, 22.52 KB CSS, 47.13 KB hero AVIF, no fonts.
+- All 17 live deployment files matched the locally generated `dist/`
+  byte-for-byte.
 
-- Unit tests: 4 passed (service-date/distance calculations, CSV escaping,
-  backup validation).
-- Playwright 1.58.2: desktop Chromium and 390 px mobile creation → component →
-  service → reload flow passed; offline reload passed on both; JSON
-  export/delete/restore passed; axe WCAG A/AA scans found no serious or critical
-  violations in empty and populated timeline states.
-- Production build: successful; initial app JS 38.47 KB raw / 12.15 KB gzip,
-  CSS 22.52 KB raw / 5.87 KB gzip. Hero variants: AVIF 47 KB, WebP 78 KB,
-  JPEG 151 KB (all under the 300 KB requirement). No font payload.
-- Lighthouse mobile, local production preview: Performance **99**,
-  Accessibility **100**, Best Practices **100**, SEO **100**. FCP 1.0 s, LCP
-  2.0 s, total blocking time 0 ms, CLS 0.
-- Console smoke test on desktop and 390 px empty states: zero errors, exactly
-  one `h1`, and one `main`.
-- `npm audit`: 0 vulnerabilities after updating Vite and Vitest to patched
-  versions.
+## Next steps
 
-Exact production command: `npm run build`. It type-checks, builds all three
-HTML entries, and generates the versioned `dist/sw.js` precache.
-
-## Known gaps and release steps
-
-- The factory must register the `bike-service-timeline` paid product and its
-  return URL in the Sociobot billing engine before checkout can complete. No
-  product ID or payment secret is embedded in this repository.
-- License verification was implemented to contract and failure-tested through
-  the resilient free state, but a real hosted purchase could not be completed
-  without that external product registration.
-- Records intentionally do not sync between devices. JSON backup/restore is the
-  supported portability path; clearing browser storage without a backup cannot
-  be recovered by the service.
-- Cost is stored as a user-entered number without imposing a currency because
-  this local utility has no account locale or billing profile.
-
-## Next step
-
-Deploy `dist/`, register the paid product/return URL, then run one checkout in
-the billing sandbox to confirm the production hostname’s CORS and redirect
-configuration.
+Fix V-01 through V-06, deploy the repaired candidate, confirm a complete hosted
+test purchase/return/restore flow, and rerun independent verification. Product
+source was not modified by this verification; only this handoff and the
+verification report were changed.
