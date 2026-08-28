@@ -1,7 +1,8 @@
 # Polish round 1 — finding disposition
 
 Local evidence is from `npm test`, `npm run test:e2e`, and the exact commands
-in `claims.json`. Live evidence is recorded after deployment in the handoff.
+in `claims.json`. Final live evidence is in `.factory/handoff.md`, with
+screenshots under `.factory/evidence/`.
 
 | Finding | Change made | Evidence |
 | --- | --- | --- |
