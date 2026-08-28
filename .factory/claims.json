@@ -1,0 +1,12 @@
+[
+  {"id":"demo-isolation","claim":"Sample data is isolated from real records.","where":"Demo banner and README","test":"npm run test:e2e -- --grep @claim:demo-isolation","sandbox":"fresh browser context at /demo; write sample record then assert root remains empty"},
+  {"id":"demo-reset","claim":"The demo resets to its shipped sample data.","where":"Demo banner","test":"npm run test:e2e -- --grep @claim:demo-reset","sandbox":"fresh browser context at /demo"},
+  {"id":"offline-reload","claim":"Works offline after the first visit.","where":"README","test":"npm run test:e2e -- --grep @claim:offline-reload","sandbox":"fresh browser context at /demo; offline reload after service worker control"},
+  {"id":"csv-export","claim":"Exports service history as CSV.","where":"History and backup screens","test":"npm run test:e2e -- --grep @claim:csv-export","sandbox":"fresh browser context at /demo; inspect downloaded sample CSV"},
+  {"id":"backup-export","claim":"Downloads a complete JSON backup.","where":"Backup screen","test":"npm run test:e2e -- --grep @claim:backup-export","sandbox":"fresh browser context at /demo; inspect downloaded backup"},
+  {"id":"local-records","claim":"Records stay in this browser unless you export them.","where":"Landing and Privacy notice","test":"npm run test:e2e -- --grep @claim:local-records","sandbox":"fresh browser context at /demo; record outgoing requests through an export"},
+  {"id":"date-distance-reminders","claim":"Uses your date and distance reminders.","where":"Landing and README","test":"npm test -- -t @claim:date-distance-reminders","sandbox":"unit fixtures cover month ends and missing service mileage"},
+  {"id":"backup-validation","claim":"Rejects malformed backup records before restore.","where":"Backup screen","test":"npm test -- -t @claim:backup-validation","sandbox":"unit fixture contains an invalid nested component date"},
+  {"id":"routed-history","claim":"History and backup have direct URLs.","where":"Header navigation","test":"npm run test:e2e -- --grep @claim:routed-history","sandbox":"fresh browser context at /demo; navigate and use browser back"},
+  {"id":"mobile-targets","claim":"Links have 44 pixel touch targets on phones.","where":"Site navigation and legal links","test":"npm run test:e2e -- --grep @claim:mobile-targets","sandbox":"390px viewport at /demo"}
+]

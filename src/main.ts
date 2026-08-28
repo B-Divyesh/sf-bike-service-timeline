@@ -1,5 +1,6 @@
 import './styles.css';
-import { loadData, mergeData, putRecord, removeRecord, replaceData } from './db';
+import { clearDemoData, isDemoMode, loadData, mergeData, putRecord, removeRecord, replaceData } from './db';
+import { demoData } from './demo';
 import { acceptReturnedLicense, checkoutUrl, clearLicense, initialLicenseState, storeLicense, verifyLicense, type LicenseState } from './license';
 import { registerServiceWorker } from './sw-register';
 import type { AppData, Attachment, Bike, Component, ServiceEntry } from './types';
@@ -11,7 +12,7 @@ const app = document.querySelector<HTMLDivElement>('#app')!;
 const dialogRoot = document.querySelector<HTMLDivElement>('#dialog-root')!;
 const liveRegion = document.querySelector<HTMLDivElement>('#live-region')!;
 let data: AppData = { bikes: [], components: [], services: [] };
-let view: View = 'bench';
+let view: View = routeToView(location.pathname);
 let selectedBike = 'all';
 let searchTerm = '';
 let online = navigator.onLine;
@@ -29,18 +30,60 @@ void initialise();
 async function initialise(): Promise<void> {
   try {
     data = await loadData();
+    if (isDemoMode() && !data.bikes.length) { await replaceData(demoData()); data = await loadData(); }
     readRouteAction();
-    render();
+    renderRoute(true);
     license = await verifyLicense();
-    render();
+    renderRoute(true);
   } catch (error) {
     renderFatal(error instanceof Error ? error.message : 'Your records could not be opened.');
   }
 
   window.addEventListener('online', () => { online = true; announce('Back online. Your records stayed on this device.'); render(); void refreshLicense(); });
   window.addEventListener('offline', () => { online = false; announce('You are offline. You can keep working.'); render(); });
-  window.addEventListener('popstate', () => render());
+  window.addEventListener('popstate', () => { view = routeToView(location.pathname); renderRoute(true); });
   registerServiceWorker((registration) => showUpdate(registration));
+}
+
+function routeToView(path: string): View {
+  if (path === '/history') return 'timeline';
+  if (path === '/backup') return 'backup';
+  if (path === '/pass') return 'pass';
+  return 'bench';
+}
+
+function viewPath(target: View): string {
+  const demoQuery = isDemoMode() ? '?demo=1' : '';
+  if (target === 'timeline') return `/history${demoQuery}`;
+  if (target === 'backup') return `/backup${demoQuery}`;
+  if (target === 'pass') return `/pass${demoQuery}`;
+  return isDemoMode() ? '/demo' : '/';
+}
+
+function routeTitle(): string {
+  if (isDemoMode() && view === 'bench') return 'Demo — Bike Service Timeline';
+  return ({ bench: 'Bike Service Timeline — Track service across bikes', timeline: 'Service history — Bike Service Timeline', backup: 'Back up and export — Bike Service Timeline', pass: 'Workshop Pass — Bike Service Timeline' } as Record<View, string>)[view];
+}
+
+function navigate(target: View): void {
+  view = target;
+  history.pushState({}, '', viewPath(target));
+  renderRoute();
+}
+
+function renderRoute(fromPop = false): void {
+  render();
+  document.title = routeTitle();
+  const path = location.pathname === '/demo' ? '/demo' : viewPath(view).split('?')[0];
+  const canonical = `https://bike-service-timeline.sociobot.in${path}`;
+  document.querySelector<HTMLLinkElement>('link[rel="canonical"]')?.setAttribute('href', canonical);
+  document.querySelector('meta[property="og:url"]')?.setAttribute('content', canonical);
+  document.querySelector('meta[property="og:title"]')?.setAttribute('content', document.title);
+  document.querySelector('meta[name="twitter:title"]')?.setAttribute('content', document.title);
+  const main = document.querySelector<HTMLElement>('#main');
+  if (!fromPop) window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  main?.setAttribute('tabindex', '-1');
+  requestAnimationFrame(() => { main?.focus({ preventScroll: true }); announce(`${document.querySelector('h1')?.textContent ?? 'Page'} loaded.`); });
 }
 
 function readRouteAction(): void {
@@ -72,26 +115,28 @@ function render(): void {
         <span><strong>Bike Service</strong><small>Timeline</small></span>
       </a>
       <nav aria-label="Primary navigation">
-        ${navButton('bench', 'Bench')}
-        ${navButton('timeline', 'All history')}
-        ${navButton('backup', 'Backup')}
-        ${navButton('pass', license.unlocked ? 'Pass active' : 'Workshop Pass')}
+        ${navLink('bench', 'Bike overview')}
+        ${navLink('timeline', 'All history')}
+        ${navLink('backup', 'Back up and export')}
+        ${navLink('pass', license.unlocked ? 'Pass active' : 'Workshop Pass')}
       </nav>
-      <button class="button primary header-action" data-action="service" ${data.bikes.length ? '' : 'disabled'}>Log service</button>
+      <button class="button primary header-action" data-action="${data.bikes.length ? 'service' : 'bike'}">${data.bikes.length ? 'Log service' : 'Add a bike'}</button>
     </header>
+    ${isDemoMode() ? '<div class="demo-banner" role="status">Demo — sample data, nothing is saved <span><button class="link-button" data-action="reset-demo">Reset demo</button><a class="link-button" href="/">Start for real</a></span></div>' : ''}
     ${!online ? '<div class="offline-banner" role="status"><span aria-hidden="true">●</span> Offline — every change is still saved on this device.</div>' : ''}
     ${license.notice ? `<div class="license-notice" role="status">${e(license.notice)} ${license.unlocked ? '' : `<a href="${checkoutUrl}">View the pass</a>`}</div>` : ''}
     ${renderMain()}
     <footer>
-      <div><strong>Bike Service Timeline</strong><p>Private by default. Your records stay in this browser.</p></div>
+      <div><strong>Bike Service Timeline</strong><p>Service history for people who maintain more than one bike.</p></div>
       <div class="footer-links"><a href="/privacy/">Privacy</a><a href="/terms/">Terms</a><button class="link-button" data-action="backup">Export backup</button></div>
+      <p class="factory-note">Built by Param Factory · build ${import.meta.env.VITE_BUILD_ID ?? 'a4a2a1e'}</p>
       <p class="art-note">Paper-workshop illustration created with AI assistance for this product.</p>
     </footer>`;
   bindMainEvents();
 }
 
-function navButton(target: View, label: string): string {
-  return `<button class="nav-button ${view === target ? 'active' : ''}" data-view="${target}" ${view === target ? 'aria-current="page"' : ''}>${label}</button>`;
+function navLink(target: View, label: string): string {
+  return `<a class="nav-button ${view === target ? 'active' : ''}" href="${viewPath(target)}" data-view="${target}" ${view === target ? 'aria-current="page"' : ''}>${label}</a>`;
 }
 
 function renderMain(): string {
@@ -105,16 +150,23 @@ function renderBench(): string {
   if (!data.bikes.length) {
     return `<main id="main" class="empty-main">
       <section class="empty-copy">
-        <span class="eyebrow">A service record you own</span>
-        <h1>Every bike has a story.<br />Keep the whole trail.</h1>
-        <p class="lede">Log components, workshop visits, receipts, and the little fixes between them. See what needs attention next, across every bike—even offline.</p>
-        <div class="action-row"><button class="button primary" data-action="bike">Add your first bike</button><button class="button secondary" data-action="import-focus">Restore a backup</button></div>
-        <ul class="trust-list" aria-label="Product benefits"><li>Stored on your device</li><li>Export anytime</li><li>No ride tracking</li></ul>
+        <span class="eyebrow">Private service history for all your bikes</span>
+        <h1>Track service across all your bikes</h1>
+        <p class="lede">For people who maintain several bikes and need one history plus a clear view of what is due next.</p>
+        <div class="action-row"><a class="button primary" href="/demo">Try it with sample data</a><button class="button secondary" data-action="bike">Add your first bike</button></div>
+        <p class="action-help">The sample opens three local bike histories. Adding a bike opens a blank record.</p>
+        <ul class="trust-list" aria-label="Product facts"><li>Stored in this browser</li><li>Works offline after the first visit</li><li>Export JSON or CSV</li></ul>
       </section>
       <figure class="hero-figure">
         <picture><source srcset="/assets/hero-workshop.avif" type="image/avif" /><source srcset="/assets/hero-workshop.webp" type="image/webp" /><img src="/assets/hero-workshop.jpg" width="1024" height="683" fetchpriority="high" decoding="async" alt="Layered paper workshop with road, cargo, and mountain bikes connected by blank service tags" /></picture>
         <figcaption>One quiet workshop for every bicycle you keep.</figcaption>
       </figure>
+      <section class="landing-details" aria-label="How Bike Service Timeline works">
+        <div><h2>See the service view before adding records</h2><p>Sample road, cargo, and mountain bikes show due reminders and service history.</p></div>
+        <div class="how-it-works"><h2>How it works</h2><ol><li><strong>Add bikes</strong><span>Keep odometers and notes together.</span></li><li><strong>Log service</strong><span>Record work, cost, and repair shop details.</span></li><li><strong>Check what is due</strong><span>Use your own date and distance reminders.</span></li></ol></div>
+        <div><h2>Privacy and limits</h2><p>Records stay in this browser unless you export them. Reminders are personal planning aids, not safety advice.</p></div>
+        <div><h2>Workshop Pass</h2><p>Free: two bikes. US$19 once: unlimited bikes and receipt or photo attachments.</p><a href="/pass">See Workshop Pass details</a></div>
+      </section>
     </main>`;
   }
 
@@ -235,7 +287,7 @@ function renderPass(): string {
 }
 
 function bindMainEvents(): void {
-  document.querySelectorAll<HTMLElement>('[data-view]').forEach((element) => element.addEventListener('click', () => { view = element.dataset.view as View; render(); document.querySelector('#main')?.scrollIntoView(); }));
+  document.querySelectorAll<HTMLElement>('[data-view]').forEach((element) => element.addEventListener('click', (event) => { event.preventDefault(); navigate(element.dataset.view as View); }));
   document.querySelectorAll<HTMLElement>('[data-action]').forEach((element) => element.addEventListener('click', () => handleAction(element.dataset.action ?? '', element.dataset)));
   document.querySelector<HTMLInputElement>('#timeline-search')?.addEventListener('input', (event) => { searchTerm = (event.target as HTMLInputElement).value; renderTimelineOnly(); });
   document.querySelector<HTMLSelectElement>('#bike-filter')?.addEventListener('change', (event) => { selectedBike = (event.target as HTMLSelectElement).value; render(); });
@@ -267,13 +319,23 @@ function handleAction(action: string, dataset: DOMStringMap): void {
   if (action === 'delete-service' && dataset.id) return void deleteService(dataset.id);
   if (action === 'csv') return download('bike-service-history.csv', serviceCsv(data), 'text/csv;charset=utf-8');
   if (action === 'json' || action === 'backup') return action === 'backup' ? goToBackup() : download('bike-service-timeline-backup.json', JSON.stringify(createBackup(data), null, 2), 'application/json');
-  if (action === 'print') { if (view !== 'timeline') { view = 'timeline'; render(); } setTimeout(() => window.print(), 50); return; }
+  if (action === 'print') { if (view !== 'timeline') navigate('timeline'); setTimeout(() => window.print(), 50); return; }
   if (action === 'clear-filters') { selectedBike = 'all'; searchTerm = ''; render(); return; }
   if (action === 'import-focus') { goToBackup(); setTimeout(() => document.querySelector<HTMLInputElement>('#backup-file')?.focus(), 20); return; }
   if (action === 'remove-license') { clearLicense(); license = initialLicenseState(); announce('License removed from this device.'); render(); }
+  if (action === 'reset-demo') return void resetDemo();
 }
 
-function goToBackup(): void { view = 'backup'; render(); document.querySelector('#main')?.scrollIntoView(); }
+function goToBackup(): void { navigate('backup'); }
+
+async function resetDemo(): Promise<void> {
+  await clearDemoData();
+  await replaceData(demoData());
+  data = await loadData();
+  view = 'bench';
+  renderRoute();
+  announce('Sample data reset. Nothing was saved to your real records.');
+}
 
 function bindRestore(): void {
   const file = document.querySelector<HTMLInputElement>('#backup-file');
@@ -304,7 +366,7 @@ function bindRestore(): void {
 
 function openBikeDialog(id?: string): void {
   const existing = data.bikes.find((item) => item.id === id);
-  if (!existing && data.bikes.length >= 2 && !license.unlocked) { view = 'pass'; announce('The free bench holds two bikes. Workshop Pass unlocks unlimited bikes.'); render(); return; }
+  if (!existing && data.bikes.length >= 2 && !license.unlocked && !isDemoMode()) { navigate('pass'); announce('The free bench holds two bikes. Workshop Pass unlocks unlimited bikes.'); return; }
   const dialog = createDialog(existing ? `Edit ${existing.name}` : 'Add a bike', `
     <form id="bike-form" class="record-form">
       <label><span>Bike name <em>Required</em></span><input name="name" required maxlength="60" value="${e(existing?.name)}" placeholder="e.g. Blue Commuter" /></label>
