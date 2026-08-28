@@ -1,0 +1,9 @@
+{
+  "slug": "bike-service-timeline",
+  "title": "Bike Service Timeline",
+  "artifact_class": "pwa-offline",
+  "user": "Owners of multiple bicycles who need a complete, portable component-service history and a clear next-service view across every bike.",
+  "smallest_useful_product": "Offline PWA with bikes, components, service entries, receipts/photos, mileage/date triggers, and one chronological all-bike view exportable as CSV/print.",
+  "monetization": "one-time",
+  "constraints": "Local-first with explicit export/backup; retain only user-entered records; interval guidance is configurable and never safety certification."
+}
