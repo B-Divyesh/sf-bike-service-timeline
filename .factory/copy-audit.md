@@ -43,7 +43,7 @@ and actions. No unit exceeds 22 words. No banned marketing word remains.
 | Privacy | 1 |
 | Terms | 1 |
 | Export backup | 2 |
-| Built by Param Factory · build polish-2 | 7 |
+| Built by Param Factory · build polish-3 | 7 |
 | Paper-workshop illustration created with AI assistance for this product. | 9 |
 
 ## README
