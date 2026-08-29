@@ -35,8 +35,8 @@ footer { display: grid; gap: 8px; padding: 10px 0 40px; color: var(--muted); fon
 @media (max-width: 640px) {
   body { background-image: none; }
   header { align-items: flex-start; flex-direction: column; padding-block: 12px; }
-  header nav { width: 100%; flex-wrap: nowrap; overflow-x: auto; }
-  header nav a { flex: 0 0 auto; }
+  header nav { width: 100%; gap: 0 4px; overflow: visible; }
+  header nav a { flex: 1 1 auto; justify-content: center; padding-inline: 3px; font-size: 14px; white-space: nowrap; }
   main { margin-block: 28px; }
 }
 @media (prefers-color-scheme: dark) {

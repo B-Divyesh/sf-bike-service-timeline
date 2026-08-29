@@ -296,5 +296,12 @@ test('@claim:mobile-targets keeps phone layouts usable and navigation targets at
       })
       .filter(box => box.width < 44 || box.height < 44));
     expect(smallTargets).toEqual([]);
+    const clippedHeaderLinks = await page.locator('header nav a').evaluateAll(elements => elements
+      .map(element => {
+        const box = element.getBoundingClientRect();
+        return { text: element.textContent?.trim(), left: box.left, right: box.right, visible: box.right <= innerWidth && box.left >= 0 };
+      })
+      .filter(item => !item.visible));
+    expect(clippedHeaderLinks).toEqual([]);
   }
 });
