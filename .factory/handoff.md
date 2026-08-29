@@ -1,55 +1,64 @@
-# Bike Service Timeline — review 4 handoff
+# Bike Service Timeline — polish round 4 handoff
 
-## Current review result
+## Result
 
-- Work order: `bike-service-timeline-review-4`
-- Review status: **FAIL** — one minor finding remains: the shared header has no
-  direct **Demo** or **Privacy** link. See [review-4.md](./review-4.md),
-  `F-4-1`.
-- This review was read-only. No product code changed.
-- Fresh 390 × 844 and 1440 × 1000 live contexts passed the cold-read check with
-  no console errors. A fresh clone passed `npm ci`, `npm test` (9 passed),
-  `npm run build`, all 15 exact claim commands, and the 40-test live suite.
-- Next step: replace the redundant **Bike overview** header link with **Demo**,
-  add **Privacy** to the shared header, add a route/header test, then rerun the
-  complete review.
+- Work order: `bike-service-timeline-polish-4`
+- Status: **PASS — zero known findings**
+- Review source: `09b3cdd0db8e3bedb7add067cb89d3ed7b8e2c3b`
+- Final implementation commit: `c974390d5ff60b7d0626b7ca6c58f55e0e79dac3`
+- Live URL: <https://bike-service-timeline.sociobot.in>
+- Final Static Web Apps deployment: `6b57b394-3dca-4f4f-858c-13cdcd8ecfe9`
 
-- Work order: `bike-service-timeline-polish-3`
-- Repair commit: `6f7913e1c10739048b00d206ddc5b10c34eec0b5`
-- Deployed production URL: <https://bike-service-timeline.sociobot.in>
-- Deployment: Static Web Apps production deployment `b97acca9-ef28-42ba-8830-c6898e1a4078`
+## What changed
 
-## Done
+The shared header now exposes the four useful destinations on every route:
+Demo, All history, Back up and export, and Privacy. The wordmark remains the
+home link. The first-screen sample action enters exact `/?demo=1` in one click.
+Phone navigation now wraps and sizes itself so all four links remain visible,
+with 44 px targets and no page overflow. The catalog description is a
+64-character verb-first sentence, and the build identity is `polish-4`.
 
-Resolved every review finding. The core multi-bike promise has its own real-data
-claim and browser test. The root metadata now says `Track service across all
-bikes`. The designed 404 uses literal error/recovery copy. Build identity is
-`polish-3`. The product remains an offline, local-first PWA with its paper
-workshop visual system intact.
+All cumulative work remains intact: the job-first first screen, isolated and
+resettable sample database, 15 real claim tests, nested backup validation,
+month-end and mileage calculations, complete exports, real route titles and
+focus, designed HTTP 404, legal metadata, privacy boundaries, and offline PWA.
+The paper-workshop visual identity was preserved.
 
-The full per-ID mapping is in [`.factory/polish-3.md`](./polish-3.md). The
-catalog description is verb-first and 68 characters long.
+Every finding-to-change-to-evidence mapping is in
+[`polish-4.md`](./polish-4.md).
 
-## Verification
+## Exact verification
 
-- Clean clone: `/tmp/bike-service-timeline-clean.tioGQe` at repair commit
-  `6f7913e`; `npm ci`, `npm test` (9 passed), and `npm run build` passed.
-- Every one of the 15 exact commands in `.factory/claims.json` passed from that
-  clone with `set -e`, including `@claim:multi-bike-history`.
-- Local full browser suite: 35 passed and 5 intentional mobile skips; it covers
-  dialog focus, metadata, all-route Axe scans, offline reload, demo isolation,
-  exports, routing, privacy requests, print, and mobile targets.
-- The same full suite passed against production using
-  `PLAYWRIGHT_BASE_URL=https://bike-service-timeline.sociobot.in npm run test:e2e`.
-- `verify-url.sh` cold checks for [root](./evidence/polish-3/live-root/verify.json)
-  and [direct `?demo=1`](./evidence/polish-3/live-demo/verify.json) report no
-  console errors, one h1, main, `lang=en`, and no missing alt text.
-- Live `GET /does-not-exist` returned HTTP 404 with [literal recovery copy](./evidence/polish-3/live-404.html).
-- Live headers confirm CSP, Permissions Policy, nosniff, referrer policy,
-  manifest/AVIF MIME types, and immutable cache headers for fingerprinted files.
-- [Lighthouse](./evidence/polish-3/lighthouse-live.json) on production scored
-  Performance 100, Accessibility 100, Best Practices 100, SEO 100; FCP 0.9 s,
-  LCP 1.5 s, CLS 0, TBT 0 ms.
+- Fresh clone: `/tmp/bike-service-timeline-polish4-final.K0jTHH` at exact SHA
+  `c974390d5ff60b7d0626b7ca6c58f55e0e79dac3`.
+- `npm ci`: 61 packages, 0 vulnerabilities.
+- `npm test`: 9/9 unit and factory-contract tests passed.
+- `npm run build`: passed; `dist/index.html` produced with 18 precached files.
+- Every one of the 15 exact commands in `.factory/claims.json`: passed.
+- Full clean-clone browser schedule: 36 passed; 6 intentional
+  viewport-independent mobile duplicates skipped.
+- Final local browser schedule: 36 passed; 6 intentional skips.
+- Final production browser schedule with `PLAYWRIGHT_BASE_URL`: 36 passed; 6
+  intentional skips. This includes Axe scans, request-origin privacy checks,
+  offline reload, demo isolation/reset, complete CSV/JSON parsing, route
+  title/canonical/focus/history, dialog focus, mobile targets, and unclipped
+  header links.
+- Cold root, exact `?demo=1`, and 404 verification reports show HTTPS 200, one
+  h1, `lang=en`, a main landmark, no missing alt text, and zero console errors.
+- Unknown live path `/does-not-exist-polish-4`: HTTP 404 with the designed
+  `Page not found` recovery screen.
+- Production headers: CSP, Permissions Policy, nosniff, referrer policy,
+  manifest/AVIF MIME types, and one-year immutable caching for fingerprinted
+  assets all present.
+- Payload: initial JS 42.17 KB raw / 13.45 KB gzip; CSS 23.76 KB raw / 6.07 KB
+  gzip; both are under budget.
+- Live mobile Lighthouse: Performance 98, Accessibility 100, Best Practices
+  100, SEO 100; FCP 0.99 s, LCP 1.80 s, TBT 140 ms, CLS 0.
+- `npm audit --audit-level=moderate`: 0 vulnerabilities.
+
+Evidence is under [`evidence/polish-4`](./evidence/polish-4/), including final
+mobile/desktop screenshots, verifier JSON, response headers, unknown-path body,
+and the Lighthouse JSON report.
 
 ## Run and deploy
 
@@ -58,13 +67,12 @@ npm ci
 npm test
 npm run test:e2e
 npm run build
+/opt/fleet/lib/deploy-static.sh bike-service-timeline dist
 ```
 
-Deploy `dist/` as the configured static site. The build output includes the
-manifest, service worker, legal pages, designed 404, and Static Web Apps config.
+Deploy `dist/` as the static PWA. It contains the offline worker, manifest,
+legal routes, designed 404, and Static Web Apps configuration.
 
-## Known gaps
+## Known gaps and next steps
 
-One minor finding remains: `F-4-1`, missing direct Demo and Privacy navigation
-in the shared header. All earlier findings were independently rechecked as
-fixed in review 4.
+None. No finding of any severity remains unresolved.
