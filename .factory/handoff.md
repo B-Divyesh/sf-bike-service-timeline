@@ -3,7 +3,7 @@
 - Work order: `bike-service-timeline-polish-2`
 - Date: 2026-08-29 UTC
 - Live URL: <https://bike-service-timeline.sociobot.in>
-- Repair commits: `50236f3`, `ed1c69c`
+- Repair commits: `50236f3`, `ed1c69c`, `9bbacfc`
 - Deployed build ID: `polish-2`
 
 ## Done
@@ -49,7 +49,7 @@ npm run test:e2e
 Results:
 
 - Vitest: 9 passed.
-- Playwright: 34 passed, 4 intentional cross-viewport skips.
+- Playwright: 33 passed, 5 intentional cross-viewport skips.
 - Build: `dist/index.html` produced.
 - Initial JS: 42.02 KB raw / 13.44 KB gzip.
 - CSS: 23.64 KB raw / 6.04 KB gzip.
@@ -59,10 +59,11 @@ Results:
 - Live Lighthouse mobile: performance 100, accessibility 100, best practices
   100, SEO 100; LCP 1.4 s, CLS 0, total blocking time 10 ms.
 
-Every command in `.factory/claims.json` was run from a clean clone. The 14
-registered claims each have exactly one tagged test and all passed. The browser
-claim suite was also pointed at production: 12 Chromium claim tests and the
-390 px mobile-target claim passed.
+Every command in `.factory/claims.json` was run from clean remote clone
+`/tmp/bst-polish-2-clean.bEm8fV` at `9bbacfcfa4723f551ffe700d8841ea26f0f875df`.
+The 14 registered claims each have exactly one tagged test and all passed. The
+browser claim suite was also pointed at production: 12 Chromium claim tests and
+the 390 px mobile-target claim passed.
 
 Production checks:
 

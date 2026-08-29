@@ -3,7 +3,7 @@
 - Work order: `bike-service-timeline-polish-2`
 - Repaired candidate: `47b5422db8de1c55d3429e4a053ea105cac1296b`
 - Review source: `f10c8bcf820df36330651cb69b3c95f3e71cf68e`
-- Repair commits: `50236f3`, `ed1c69c`
+- Repair commits: `50236f3`, `ed1c69c`, `9bbacfc`
 - Live URL: <https://bike-service-timeline.sociobot.in>
 - Evidence images: [local/mobile home](./evidence/polish-2/local-home-mobile.png), [local/mobile demo](./evidence/polish-2/local-demo-mobile.png), [live/mobile demo](./evidence/polish-2/live-demo/screenshot-mobile.png), [live/mobile 404](./evidence/polish-2/local-404-mobile.png)
 
@@ -109,4 +109,3 @@ The first production deploy revealed that the service worker tried to precache
 the deployment-only `staticwebapp.config.json`, which Azure does not expose.
 The post-build step now excludes it. The repaired live worker installed and the
 offline reload, CSV, and JSON claims passed directly against production.
-
