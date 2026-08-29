@@ -1,1 +1,1 @@
-Track each bike's service history and see what needs attention next.
+Track service history and see what is due across all your bikes.

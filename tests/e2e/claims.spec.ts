@@ -79,7 +79,12 @@ test('@claim:demo-reset restores the shipped sample data', async ({ page }) => {
 });
 
 test('@claim:sample-content-and-onboarding shows three useful histories and starts a blank real record', async ({ page }) => {
-  await page.goto('/demo');
+  await page.goto('/');
+  const sampleLink = page.getByRole('link', { name: 'Try it with sample data' });
+  await expect(sampleLink).toHaveAttribute('href', '/?demo=1');
+  await sampleLink.click();
+  await expect(page).toHaveURL(/\?demo=1$/);
+  await expect(page.getByText('Demo — sample data, nothing is saved')).toBeVisible();
   for (const bike of ['Aster Road', 'Maple Cargo', 'Pine Trail']) {
     await expect(page.getByRole('heading', { name: bike })).toBeVisible();
   }
@@ -211,7 +216,7 @@ test('@claim:local-records keeps the complete demo flow on the product origin', 
   const pending = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download JSON backup' }).click();
   await pending;
-  await page.getByRole('link', { name: 'Bike overview' }).click();
+  await page.getByRole('link', { name: 'Demo', exact: true }).click();
   await page.getByRole('button', { name: 'Edit Privacy check bike' }).click();
   page.once('dialog', dialog => dialog.accept());
   await page.getByRole('button', { name: 'Delete bike' }).click();

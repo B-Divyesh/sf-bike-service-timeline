@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite';
-const buildId = process.env.VITE_BUILD_ID || 'polish-3';
+const buildId = process.env.VITE_BUILD_ID || 'polish-4';
 
 export default defineConfig({
   define: { __BUILD_ID__: JSON.stringify(buildId) },

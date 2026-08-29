@@ -9,9 +9,10 @@ and actions. No unit exceeds 22 words. No banned marketing word remains.
 | --- | ---: |
 | Skip to your service timeline | 5 |
 | Bike Service Timeline | 3 |
-| Bike overview | 2 |
+| Demo | 1 |
 | All history | 2 |
 | Back up and export | 4 |
+| Privacy | 1 |
 | Add a bike | 3 |
 | Private service history for all your bikes | 7 |
 | Track service across all your bikes | 6 |
@@ -43,7 +44,7 @@ and actions. No unit exceeds 22 words. No banned marketing word remains.
 | Privacy | 1 |
 | Terms | 1 |
 | Export backup | 2 |
-| Built by Param Factory · build polish-3 | 7 |
+| Built by Param Factory · build polish-4 | 7 |
 | Paper-workshop illustration created with AI assistance for this product. | 9 |
 
 ## README

@@ -68,7 +68,7 @@ test('exports and restores a complete JSON backup', async ({ page }, testInfo) =
   const backupPath = await backup.path();
   expect(backupPath).toBeTruthy();
 
-  await page.getByRole('link', { name: 'Bike overview' }).click();
+  await page.locator('.brand').click();
   await page.getByRole('button', { name: 'Edit Backup Bike' }).click();
   page.once('dialog', (dialog) => dialog.accept());
   await page.getByRole('button', { name: 'Delete bike' }).click();
@@ -77,8 +77,28 @@ test('exports and restores a complete JSON backup', async ({ page }, testInfo) =
   await page.getByRole('link', { name: 'Back up and export', exact: true }).click();
   await page.getByLabel('Choose JSON backup').setInputFiles(backupPath!);
   await page.getByRole('button', { name: 'Restore selected backup' }).click();
-  await page.getByRole('link', { name: 'Bike overview' }).click();
+  await page.locator('.brand').click();
   await expect(page.getByRole('heading', { name: 'Backup Bike' })).toBeVisible();
+});
+
+test('shares direct Demo and Privacy navigation on every route', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'The shared header contract is viewport-independent.');
+  const routes = ['/', '/demo', '/history?demo=1', '/backup?demo=1', '/privacy/', '/terms/', '/404.html'];
+  for (const path of routes) {
+    await page.goto(path);
+    const links = page.locator('header nav[aria-label="Primary navigation"] a');
+    await expect(links).toHaveText(['Demo', 'All history', 'Back up and export', 'Privacy']);
+    await expect(links).toHaveCount(4);
+    await expect(links.nth(0)).toHaveAttribute('href', '/demo');
+    await expect(links.nth(3)).toHaveAttribute('href', '/privacy/');
+    await expect(page.locator('header nav').getByRole('link', { name: 'Bike overview' })).toHaveCount(0);
+  }
+
+  await page.goto('/privacy/');
+  await page.getByRole('link', { name: 'Demo', exact: true }).click();
+  await expect(page).toHaveURL(/\/demo$/);
+  await expect(page.getByText('Demo — sample data, nothing is saved')).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Service status' })).toBeVisible();
 });
 
 test('has no serious accessibility violations in the empty state', async ({ page }, testInfo) => {

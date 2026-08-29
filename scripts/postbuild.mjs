@@ -3,7 +3,7 @@ import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
 
 const root = new URL('../dist/', import.meta.url).pathname;
-const buildId = process.env.VITE_BUILD_ID || 'polish-3';
+const buildId = process.env.VITE_BUILD_ID || 'polish-4';
 const files = [];
 async function walk(dir) {
   for (const name of await readdir(dir)) {

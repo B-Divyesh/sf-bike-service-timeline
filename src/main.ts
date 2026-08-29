@@ -104,9 +104,10 @@ function render(): void {
         <span><strong>Bike Service</strong><small>Timeline</small></span>
       </a>
       <nav aria-label="Primary navigation">
-        ${navLink('bench', 'Bike overview')}
+        <a class="nav-button ${isDemoMode() && view === 'bench' ? 'active' : ''}" href="/demo" ${isDemoMode() && view === 'bench' ? 'aria-current="page"' : ''}>Demo</a>
         ${navLink('timeline', 'All history')}
         ${navLink('backup', 'Back up and export')}
+        <a class="nav-button" href="/privacy/">Privacy</a>
       </nav>
       <button class="button primary header-action" data-action="${data.bikes.length ? 'service' : 'bike'}">${data.bikes.length ? 'Log service' : 'Add a bike'}</button>
     </header>
@@ -139,7 +140,7 @@ function renderBench(): string {
         <span class="eyebrow">Private service history for all your bikes</span>
         <h1>Track service across all your bikes</h1>
         <p class="lede">For people who maintain several bikes and need one history plus a clear view of what is due next.</p>
-        <div class="action-row"><a class="button primary" href="/demo">Try it with sample data</a><button class="button secondary" data-action="bike">Add your first bike</button></div>
+        <div class="action-row"><a class="button primary" href="/?demo=1">Try it with sample data</a><button class="button secondary" data-action="bike">Add your first bike</button></div>
         <p class="action-help">The sample opens three bike histories. Adding a bike starts a blank record.</p>
         <ul class="trust-list" aria-label="Product facts"><li>Stored in this browser</li><li>Works offline after the first visit</li><li>Export JSON or CSV</li></ul>
       </section>
