@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 
-const productOrigin = 'http://127.0.0.1:4173';
+const productOrigin = new URL(process.env.PLAYWRIGHT_BASE_URL || 'http://127.0.0.1:4173').origin;
 
 async function downloadedText(download: import('@playwright/test').Download): Promise<string> {
   const path = await download.path();

@@ -10,7 +10,7 @@ async function walk(dir) {
     const path = join(dir, name);
     const info = await stat(path);
     if (info.isDirectory()) await walk(path);
-    else if (!name.endsWith('.map') && name !== 'sw.js') files.push('/' + relative(root, path));
+    else if (!name.endsWith('.map') && name !== 'sw.js' && name !== 'staticwebapp.config.json') files.push('/' + relative(root, path));
   }
 }
 await walk(root);
