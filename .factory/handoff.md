@@ -1,4 +1,18 @@
-# Bike Service Timeline — polish 3 handoff
+# Bike Service Timeline — review 4 handoff
+
+## Current review result
+
+- Work order: `bike-service-timeline-review-4`
+- Review status: **FAIL** — one minor finding remains: the shared header has no
+  direct **Demo** or **Privacy** link. See [review-4.md](./review-4.md),
+  `F-4-1`.
+- This review was read-only. No product code changed.
+- Fresh 390 × 844 and 1440 × 1000 live contexts passed the cold-read check with
+  no console errors. A fresh clone passed `npm ci`, `npm test` (9 passed),
+  `npm run build`, all 15 exact claim commands, and the 40-test live suite.
+- Next step: replace the redundant **Bike overview** header link with **Demo**,
+  add **Privacy** to the shared header, add a route/header test, then rerun the
+  complete review.
 
 - Work order: `bike-service-timeline-polish-3`
 - Repair commit: `6f7913e1c10739048b00d206ddc5b10c34eec0b5`
@@ -51,5 +65,6 @@ manifest, service worker, legal pages, designed 404, and Static Web Apps config.
 
 ## Known gaps
 
-None. There are no unresolved review findings or unsupported visitor-facing
-claims.
+One minor finding remains: `F-4-1`, missing direct Demo and Privacy navigation
+in the shared header. All earlier findings were independently rechecked as
+fixed in review 4.
