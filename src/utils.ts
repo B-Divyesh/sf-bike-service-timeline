@@ -66,7 +66,7 @@ export function computeDueStates(data: AppData, now = new Date()): DueState[] {
 
 export function serviceCsv(data: AppData): string {
   const quote = (value: unknown) => `"${String(value ?? '').replaceAll('"', '""')}"`;
-  const header = ['Date', 'Bike', 'Component', 'Service type', 'Work performed', 'Odometer (km)', 'Cost', 'Workshop', 'Notes', 'Attachments'];
+  const header = ['Date', 'Bike', 'Component', 'Service type', 'Work performed', 'Odometer (km)', 'Cost', 'Repair shop', 'Notes', 'Attachments'];
   const rows = [...data.services].sort((a, b) => b.date.localeCompare(a.date)).map((entry) => {
     const bike = data.bikes.find((item) => item.id === entry.bikeId)?.name ?? 'Deleted bike';
     const component = data.components.find((item) => item.id === entry.componentId)?.name ?? '';
@@ -94,25 +94,30 @@ export function parseBackup(value: unknown): Backup {
   const amount = (item: unknown, nullable = false) => (nullable && item === null) || (typeof item === 'number' && Number.isFinite(item) && item >= 0);
   const ids = new Set<string>();
   const invalid = (message: string): never => { throw new Error(`Backup validation failed: ${message}`); };
+  if (!timestamp(candidate.exportedAt)) invalid('the export date is invalid.');
   for (const [index, bike] of candidate.bikes.entries()) {
     if (!bike || typeof bike !== 'object') invalid(`bike ${index + 1} is not a record.`);
     const item = bike as Bike;
-    if (!text(item.id, 100) || ids.has(item.id) || !text(item.name, 60) || !item.name || !text(item.kind, 40) || !/^#[0-9a-f]{6}$/i.test(item.color) || !amount(item.odometer) || !text(item.notes, 500) || !timestamp(item.createdAt) || !timestamp(item.updatedAt)) invalid(`bike ${index + 1} has an invalid field.`);
+    if (!text(item.id, 100) || !item.id || ids.has(item.id) || !text(item.name, 60) || !item.name || !text(item.kind, 40) || !item.kind || !/^#[0-9a-f]{6}$/i.test(item.color) || !amount(item.odometer) || !text(item.notes, 500) || !timestamp(item.createdAt) || !timestamp(item.updatedAt)) invalid(`bike ${index + 1} has an invalid field.`);
     ids.add(item.id);
   }
   const componentIds = new Set<string>();
   for (const [index, component] of candidate.components.entries()) {
     if (!component || typeof component !== 'object') invalid(`component ${index + 1} is not a record.`);
     const item = component as Component;
-    if (!text(item.id, 100) || componentIds.has(item.id) || !ids.has(item.bikeId) || !text(item.name, 80) || !item.name || !validDate(item.installedDate) || !amount(item.installedMileage, true) || !(item.intervalKm === null || (Number.isInteger(item.intervalKm) && item.intervalKm >= 1)) || !(item.intervalMonths === null || (Number.isInteger(item.intervalMonths) && item.intervalMonths >= 1 && item.intervalMonths <= 240)) || !text(item.notes, 500) || !timestamp(item.createdAt) || !timestamp(item.updatedAt)) invalid(`component ${index + 1} has an invalid field or bike reference.`);
+    if (!text(item.id, 100) || !item.id || componentIds.has(item.id) || !ids.has(item.bikeId) || !text(item.name, 80) || !item.name || !validDate(item.installedDate) || !amount(item.installedMileage, true) || !(item.intervalKm === null || (Number.isInteger(item.intervalKm) && item.intervalKm >= 1)) || !(item.intervalMonths === null || (Number.isInteger(item.intervalMonths) && item.intervalMonths >= 1 && item.intervalMonths <= 240)) || !text(item.notes, 500) || !timestamp(item.createdAt) || !timestamp(item.updatedAt)) invalid(`component ${index + 1} has an invalid field or bike reference.`);
     componentIds.add(item.id);
   }
   const serviceIds = new Set<string>();
   for (const [index, service] of candidate.services.entries()) {
     if (!service || typeof service !== 'object') invalid(`service entry ${index + 1} is not a record.`);
     const item = service as ServiceEntry;
-    if (!text(item.id, 100) || serviceIds.has(item.id) || !ids.has(item.bikeId) || !(item.componentId === null || componentIds.has(item.componentId)) || !validDate(item.date) || !amount(item.odometer, true) || !text(item.kind, 40) || !text(item.work, 100) || !item.work || !text(item.notes, 1500) || !amount(item.cost, true) || !text(item.workshop, 100) || !Array.isArray(item.attachments) || !timestamp(item.createdAt) || !timestamp(item.updatedAt)) invalid(`service entry ${index + 1} has an invalid field or reference.`);
-    for (const attachment of item.attachments) if (!attachment || !text(attachment.id, 100) || !text(attachment.name, 255) || !text(attachment.type, 100) || !amount(attachment.size) || !text(attachment.dataUrl, 12_000_000) || !attachment.dataUrl.startsWith('data:')) invalid(`attachment in service entry ${index + 1} is invalid.`);
+    if (!text(item.id, 100) || !item.id || serviceIds.has(item.id) || !ids.has(item.bikeId) || !(item.componentId === null || componentIds.has(item.componentId)) || !validDate(item.date) || !amount(item.odometer, true) || !text(item.kind, 40) || !item.kind || !text(item.work, 100) || !item.work || !text(item.notes, 1500) || !amount(item.cost, true) || !text(item.workshop, 100) || !Array.isArray(item.attachments) || !timestamp(item.createdAt) || !timestamp(item.updatedAt)) invalid(`service entry ${index + 1} has an invalid field or reference.`);
+    const attachmentIds = new Set<string>();
+    for (const attachment of item.attachments) {
+      if (!attachment || !text(attachment.id, 100) || !attachment.id || attachmentIds.has(attachment.id) || !text(attachment.name, 255) || !attachment.name || !text(attachment.type, 100) || !attachment.type || !amount(attachment.size) || !text(attachment.dataUrl, 12_000_000) || !attachment.dataUrl.startsWith(`data:${attachment.type}`)) invalid(`attachment in service entry ${index + 1} is invalid.`);
+      attachmentIds.add(attachment.id);
+    }
     serviceIds.add(item.id);
   }
   return candidate as Backup;

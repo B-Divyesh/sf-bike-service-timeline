@@ -101,3 +101,5 @@ Generated with the factory Azure OpenAI image deployment (`factory-image`) on
 metadata are stored beside the source asset in `assets/src/hero-workshop.json`.
 The footer discloses AI-assisted illustration.
 
+The demo's small PDF receipt is a hand-authored local fixture made for this
+product. It contains no third-party artwork, brand, or personal information.

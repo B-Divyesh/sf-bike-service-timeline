@@ -1,6 +1,8 @@
 import { defineConfig } from 'vite';
+const buildId = process.env.VITE_BUILD_ID || 'polish-2';
 
 export default defineConfig({
+  define: { __BUILD_ID__: JSON.stringify(buildId) },
   build: {
     target: 'es2022',
     sourcemap: false,

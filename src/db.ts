@@ -15,7 +15,7 @@ function openDatabase(): Promise<IDBDatabase> {
       for (const store of STORES) if (!db.objectStoreNames.contains(store)) db.createObjectStore(store, { keyPath: 'id' });
     };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(new Error('Your private records could not be opened on this device.'));
+    request.onerror = () => reject(new Error('Your private records could not be opened in this browser.'));
     request.onblocked = () => reject(new Error('Close other open copies of the app, then reload.'));
   });
 }

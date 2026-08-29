@@ -22,13 +22,24 @@ test('creates a bike, component, and service entry that survives reload', async 
   await page.getByLabel('Type Required').selectOption('Adjusted');
   await page.getByLabel('What was done? Required').fill('Aligned rear brake pads');
   await page.getByLabel('Details').fill('Checked toe-in and cable tension.');
+  await page.getByLabel('Repair shop or mechanic').fill('Home stand');
+  await page.getByLabel('Cost (your currency)').fill('18.50');
+  await page.getByLabel('Receipts or photos').setInputFiles({
+    name: 'brake-receipt.png',
+    mimeType: 'image/png',
+    buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M/wHwAF/gL+AvD3VwAAAABJRU5ErkJggg==', 'base64'),
+  });
   await page.getByRole('button', { name: 'Save service' }).click();
   await page.getByRole('link', { name: 'All history' }).click();
   await expect(page.getByRole('heading', { name: 'Aligned rear brake pads' })).toBeVisible();
+  await expect(page.getByText('Repair shop: Home stand')).toBeVisible();
+  await expect(page.getByText('Cost: 18.5')).toBeVisible();
+  await expect(page.getByAltText('Attached file: brake-receipt.png')).toBeVisible();
 
   await page.reload();
   await page.getByRole('link', { name: 'All history' }).click();
   await expect(page.getByRole('heading', { name: 'Aligned rear brake pads' })).toBeVisible();
+  await expect(page.getByAltText('Attached file: brake-receipt.png')).toBeVisible();
   const accessibility = await new AxeBuilder({ page: page as never }).withTags(['wcag2a', 'wcag2aa']).analyze();
   expect(accessibility.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual([]);
 });
@@ -75,4 +86,48 @@ test('has no serious accessibility violations in the empty state', async ({ page
   await page.goto('/');
   const results = await new AxeBuilder({ page: page as never }).withTags(['wcag2a', 'wcag2aa']).analyze();
   expect(results.violations.filter((violation) => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual([]);
+});
+
+test('keeps dialog focus contained and returns focus when closed', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Keyboard behavior is viewport-independent.');
+  await page.goto('/');
+  const opener = page.getByRole('button', { name: 'Add your first bike' });
+  await opener.focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('dialog')).toBeVisible();
+  await expect(page.getByLabel('Bike name Required')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await expect(opener).toBeFocused();
+});
+
+test('sets complete metadata on app, legal, and 404 routes', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'Metadata is viewport-independent.');
+  const routes = [
+    ['/', 'Bike Service Timeline — Track service across bikes', 'https://bike-service-timeline.sociobot.in/'],
+    ['/demo', 'Demo — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/demo'],
+    ['/history?demo=1', 'Service history — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/history'],
+    ['/backup?demo=1', 'Backup and export — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/backup'],
+    ['/privacy/', 'Privacy — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/privacy/'],
+    ['/terms/', 'Terms — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/terms/'],
+    ['/404.html', 'Page not found — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/404.html'],
+  ] as const;
+  for (const [path, title, canonical] of routes) {
+    await page.goto(path);
+    await expect(page).toHaveTitle(title);
+    await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', canonical);
+    await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveCount(1);
+    await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', /share-workshop\.jpg$/);
+    await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+    expect(await page.locator('h1').count()).toBe(1);
+  }
+});
+
+test('has no serious accessibility violations on product, legal, and 404 routes', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'One browser covers the shared responsive markup.');
+  for (const path of ['/demo', '/history?demo=1', '/backup?demo=1', '/privacy/', '/terms/', '/404.html']) {
+    await page.goto(path);
+    const results = await new AxeBuilder({ page: page as never }).withTags(['wcag2a', 'wcag2aa']).analyze();
+    expect(results.violations.filter(violation => ['serious', 'critical'].includes(violation.impact ?? '')), path).toEqual([]);
+  }
 });

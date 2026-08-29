@@ -3,6 +3,7 @@ import { createHash } from 'node:crypto';
 import { join, relative } from 'node:path';
 
 const root = new URL('../dist/', import.meta.url).pathname;
+const buildId = process.env.VITE_BUILD_ID || 'polish-2';
 const files = [];
 async function walk(dir) {
   for (const name of await readdir(dir)) {
@@ -13,6 +14,10 @@ async function walk(dir) {
   }
 }
 await walk(root);
+for (const path of files.filter((path) => path.endsWith('.html'))) {
+  const absolute = join(root, path.slice(1));
+  await writeFile(absolute, (await readFile(absolute, 'utf8')).replaceAll('__BUILD_ID__', buildId));
+}
 const signature = createHash('sha256').update(files.sort().join('|')).digest('hex').slice(0, 10);
 const sw = `const CACHE='bike-timeline-${signature}';
 const SHELL=${JSON.stringify(files)};

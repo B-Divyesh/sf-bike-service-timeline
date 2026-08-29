@@ -11,12 +11,12 @@ export const demoData = (): AppData => ({
   ],
   components: [
     { id: 'demo-chain', bikeId: 'demo-road', name: 'Chain', installedDate: '2026-02-28', installedMileage: 3280, intervalMonths: 6, intervalKm: 1000, notes: 'Waxed chain.', createdAt: stamp, updatedAt: stamp },
-    { id: 'demo-brakes', bikeId: 'demo-cargo', name: 'Rear brake pads', installedDate: '2026-05-15', installedMileage: 1280, intervalMonths: 4, intervalKm: 700, notes: 'Check before wet season.', createdAt: stamp, updatedAt: stamp },
+    { id: 'demo-brakes', bikeId: 'demo-cargo', name: 'Rear brake pads', installedDate: '2026-05-15', installedMileage: 1280, intervalMonths: 1, intervalKm: 700, notes: 'Check before wet season.', createdAt: stamp, updatedAt: stamp },
     { id: 'demo-fork', bikeId: 'demo-trail', name: 'Fork lower service', installedDate: '2026-04-03', installedMileage: 500, intervalMonths: 6, intervalKm: 500, notes: 'Owner reminder.', createdAt: stamp, updatedAt: stamp },
   ],
   services: [
     { id: 'demo-service-1', bikeId: 'demo-road', componentId: 'demo-chain', date: '2026-07-28', odometer: 4280, kind: 'Cleaned', work: 'Cleaned and rewaxed chain', notes: 'Measured at 0.5% wear.', cost: 12, workshop: 'Home', attachments: [], createdAt: stamp, updatedAt: stamp },
-    { id: 'demo-service-2', bikeId: 'demo-cargo', componentId: 'demo-brakes', date: '2026-08-12', odometer: 1860, kind: 'Inspected', work: 'Checked rear brake pads', notes: 'Pad material still even.', cost: 0, workshop: 'Northside Cycles', attachments: [], createdAt: stamp, updatedAt: stamp },
+    { id: 'demo-service-2', bikeId: 'demo-cargo', componentId: 'demo-brakes', date: '2026-08-12', odometer: 1860, kind: 'Inspected', work: 'Checked rear brake pads', notes: 'Mechanic wrote "recheck at 2,200 km", with even wear.', cost: 0, workshop: 'Northside Cycles', attachments: [{ id: 'demo-receipt', name: 'northside-brake-receipt.pdf', type: 'application/pdf', size: 407, dataUrl: 'data:application/pdf;base64,JVBERi0xLjQKMSAwIG9iajw8L1R5cGUvQ2F0YWxvZy9QYWdlcyAyIDAgUj4+ZW5kb2JqCjIgMCBvYmo8PC9UeXBlL1BhZ2VzL0tpZHNbMyAwIFJdL0NvdW50IDE+PmVuZG9iagozIDAgb2JqPDwvVHlwZS9QYWdlL1BhcmVudCAyIDAgUi9NZWRpYUJveFswIDAgMzAwIDE4MF0vQ29udGVudHMgNCAwIFIvUmVzb3VyY2VzPDwvRm9udDw8L0YxIDUgMCBSPj4+Pj4+ZW5kb2JqCjQgMCBvYmo8PC9MZW5ndGggNzA+PnN0cmVhbQpCVCAvRjEgMTQgVGYgMzAgMTMwIFRkIChCcmFrZSBzZXJ2aWNlIHJlY2VpcHQgLSBzYW1wbGUpIFRqIEVUCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iajw8L1R5cGUvRm9udC9TdWJ0eXBlL1R5cGUxL0Jhc2VGb250L0hlbHZldGljYT4+ZW5kb2JqCnRyYWlsZXI8PC9Sb290IDEgMCBSPj4KJSVFT0Y=' }], createdAt: stamp, updatedAt: stamp },
     { id: 'demo-service-3', bikeId: 'demo-trail', componentId: 'demo-fork', date: '2026-06-05', odometer: 750, kind: 'Adjusted', work: 'Set fork pressure', notes: 'Set for local rocky loop.', cost: 0, workshop: 'Home', attachments: [], createdAt: stamp, updatedAt: stamp },
   ],
 });

@@ -1,7 +1,7 @@
 {
   "name": "Bike Service Timeline",
   "short_name": "Bike Timeline",
-  "description": "A private, portable service history for every bicycle you own.",
+  "description": "Track service history and next reminders across every bike you maintain.",
   "id": "/",
   "start_url": "/?source=installed&v=1",
   "scope": "/",

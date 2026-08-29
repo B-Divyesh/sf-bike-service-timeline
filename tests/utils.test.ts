@@ -25,6 +25,11 @@ describe('next service calculation', () => {
     expect(addMonths('2024-01-31', 1)).toBe('2024-02-29');
     const withoutMileage = { ...service, id: 'service-2', date: '2026-03-01', odometer: null };
     expect(computeDueStates({ ...data, services: [service, withoutMileage] }, new Date('2026-03-02T12:00:00Z'))[0].dueMileage).toBe(2800);
+    const dateOnly = { ...component, intervalKm: null };
+    const distanceOnly = { ...component, intervalMonths: null };
+    expect(computeDueStates({ ...data, components: [dateOnly] }, new Date('2026-07-10T12:00:00Z'))[0]).toMatchObject({ dueDate: '2026-08-01', dueMileage: null, status: 'soon' });
+    expect(computeDueStates({ ...data, components: [distanceOnly] }, new Date('2026-03-01T12:00:00Z'))[0]).toMatchObject({ dueDate: null, dueMileage: 2800, status: 'soon' });
+    expect(computeDueStates(data, new Date('2026-09-01T12:00:00Z'))[0].status).toBe('overdue');
   });
 });
 
@@ -41,6 +46,8 @@ describe('portable exports', () => {
   });
 
   it('@claim:backup-validation rejects malformed nested records before storage', () => {
-    expect(() => parseBackup({ product: 'bike-service-timeline', schemaVersion: 1, bikes: [bike], components: [{ ...component, installedDate: 'not-a-date' }], services: [] })).toThrow(/component 1/);
+    expect(() => parseBackup({ product: 'bike-service-timeline', schemaVersion: 1, exportedAt: new Date().toISOString(), bikes: [bike], components: [{ ...component, installedDate: 'not-a-date' }], services: [] })).toThrow(/component 1/);
+    expect(() => parseBackup({ product: 'bike-service-timeline', schemaVersion: 1, exportedAt: new Date().toISOString(), bikes: [bike], components: [{ ...component, bikeId: 'missing' }], services: [] })).toThrow(/bike reference/);
+    expect(() => parseBackup({ product: 'bike-service-timeline', schemaVersion: 1, exportedAt: 'not-a-date', bikes: [], components: [], services: [] })).toThrow(/export date/);
   });
 });

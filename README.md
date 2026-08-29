@@ -1,22 +1,22 @@
 # Bike Service Timeline
 
 Track service history and next reminders across every bike you maintain.
-It is for people with several bikes who want one local record.
+It is for people with several bikes who want one record in their browser.
 
-Try the isolated sample at <https://bike-service-timeline.sociobot.in/demo>.
+Try the isolated sample at <https://bike-service-timeline.sociobot.in/?demo=1>.
 
 ## What it does
 
-- Keeps bikes, components, service work, odometers, costs, and repair shop notes.
-- Uses date and distance reminders that you set.
-- Shows one searchable service history across bikes.
-- Downloads a JSON backup, CSV spreadsheet export, or printable history.
-- Stores records in this browser. Export backups before clearing browser data.
-- Free: two bikes. US$19 once: unlimited bikes and receipt or photo attachments.
+- Stores bikes, components, service entries, mileage, notes, costs, and repair shop details in this browser.
+- Uses the date and distance reminders you set.
+- Searches service history across bikes in reverse date order.
+- Exports every service entry as CSV and downloads a complete JSON backup.
+- Opens a printable service history.
+- Works offline after the first visit.
 
-Records remain local unless you export them. There is no account, sync,
-analytics, advertising, or third-party script. The optional license check sends
-the saved license token to Sociobot.
+The demo and real records use separate browser databases. Starting for real
+deletes demo changes. During the tested demo flow, records are not sent to
+another origin.
 
 Reminders are personal planning aids. They are not diagnostics or safety advice.
 Read the [privacy notice](./privacy/index.html) and [terms](./terms/index.html).
@@ -38,16 +38,14 @@ npm run test:e2e
 npm run build
 ```
 
-Each visitor-facing claim is listed in [`.factory/claims.json`](./.factory/claims.json).
-Run every listed command from a clean clone. Playwright 1.58.2 is pinned; its
-Chromium browser must be available through `PLAYWRIGHT_BROWSERS_PATH`.
+Every visitor-facing claim is listed in [`.factory/claims.json`](./.factory/claims.json).
+Run each listed command from a clean clone. Playwright 1.58.2 is pinned and uses
+the Chromium build from `PLAYWRIGHT_BROWSERS_PATH`.
 
 ## Deploy
 
-Deploy `dist/` as a static site. `staticwebapp.config.json` supplies the SPA
-fallback, designed 404 response, CSP, MIME types, and immutable cache headers.
-The app uses Sociobot hosted checkout and license verification only; it contains
-no payment-provider credentials.
+Deploy `dist/` as a static site. Use `staticwebapp.config.json` for direct
+links, the designed 404 page, browser safety headers, and asset caching.
 
 ## Design and license
 

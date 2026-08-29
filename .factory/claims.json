@@ -1,12 +1,100 @@
 [
-  {"id":"demo-isolation","claim":"Sample data is isolated from real records.","where":"Demo banner and README","test":"npm run test:e2e -- --grep @claim:demo-isolation","sandbox":"fresh browser context at /demo; write sample record then assert root remains empty"},
-  {"id":"demo-reset","claim":"The demo resets to its shipped sample data.","where":"Demo banner","test":"npm run test:e2e -- --grep @claim:demo-reset","sandbox":"fresh browser context at /demo"},
-  {"id":"offline-reload","claim":"Works offline after the first visit.","where":"README","test":"npm run test:e2e -- --grep @claim:offline-reload","sandbox":"fresh browser context at /demo; offline reload after service worker control"},
-  {"id":"csv-export","claim":"Exports service history as CSV.","where":"History and backup screens","test":"npm run test:e2e -- --grep @claim:csv-export","sandbox":"fresh browser context at /demo; inspect downloaded sample CSV"},
-  {"id":"backup-export","claim":"Downloads a complete JSON backup.","where":"Backup screen","test":"npm run test:e2e -- --grep @claim:backup-export","sandbox":"fresh browser context at /demo; inspect downloaded backup"},
-  {"id":"local-records","claim":"Records stay in this browser unless you export them.","where":"Landing and Privacy notice","test":"npm run test:e2e -- --grep @claim:local-records","sandbox":"fresh browser context at /demo; record outgoing requests through an export"},
-  {"id":"date-distance-reminders","claim":"Uses your date and distance reminders.","where":"Landing and README","test":"npm test -- -t @claim:date-distance-reminders","sandbox":"unit fixtures cover month ends and missing service mileage"},
-  {"id":"backup-validation","claim":"Rejects malformed backup records before restore.","where":"Backup screen","test":"npm test -- -t @claim:backup-validation","sandbox":"unit fixture contains an invalid nested component date"},
-  {"id":"routed-history","claim":"History and backup have direct URLs.","where":"Header navigation","test":"npm run test:e2e -- --grep @claim:routed-history","sandbox":"fresh browser context at /demo; navigate and use browser back"},
-  {"id":"mobile-targets","claim":"Links have 44 pixel touch targets on phones.","where":"Site navigation and legal links","test":"npm run test:e2e -- --grep @claim:mobile-targets","sandbox":"390px viewport at /demo"}
+  {
+    "id": "demo-isolation",
+    "claim": "Sample data stays separate from real records and real license storage.",
+    "where": "Demo banner, Privacy notice, README",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:demo-isolation",
+    "sandbox": "fresh browser context with seeded real license keys; open /?demo=1, edit sample data, leave demo, and inspect storage and requests"
+  },
+  {
+    "id": "demo-reset",
+    "claim": "Reset demo restores the three shipped sample bikes.",
+    "where": "Demo banner, demo documentation",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:demo-reset",
+    "sandbox": "fresh browser context at /demo; add a sample bike, reset, and assert the original three-bike dataset"
+  },
+  {
+    "id": "sample-content-and-onboarding",
+    "claim": "The sample shows three bike histories, reminders, odometers, and notes; a real bike starts blank.",
+    "where": "Landing first screen and How it works",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:sample-content-and-onboarding",
+    "sandbox": "fresh browser context; assert every named sample bike and service, then inspect the real add-bike form"
+  },
+  {
+    "id": "offline-reload",
+    "claim": "Works offline after the first visit.",
+    "where": "Landing facts, Privacy notice, README",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:offline-reload",
+    "sandbox": "fresh browser context at /demo; wait for service-worker control, go offline, reload, and assert sample data"
+  },
+  {
+    "id": "csv-export",
+    "claim": "Exports every service entry as a chronological CSV.",
+    "where": "Landing facts, history, backup, README",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:csv-export",
+    "sandbox": "fresh offline demo; parse the download and assert its header, all rows, order, and CSV escaping"
+  },
+  {
+    "id": "json-export",
+    "claim": "Downloads a complete JSON backup.",
+    "where": "Landing facts, landing backup section, backup, README",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:json-export",
+    "sandbox": "fresh offline demo; parse the download and assert schema plus every field on every shipped record"
+  },
+  {
+    "id": "local-records",
+    "claim": "Records stay in this browser unless you export them.",
+    "where": "Landing, backup, Privacy notice, README",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:local-records",
+    "sandbox": "fresh demo; create, reload, export, and delete a record while logging requests and loaded scripts"
+  },
+  {
+    "id": "no-third-party-runtime",
+    "claim": "The app loads scripts and requests app files only from this site.",
+    "where": "Privacy notice",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:no-third-party-runtime",
+    "sandbox": "fresh browser context across every shipped route; record all requests and loaded script origins"
+  },
+  {
+    "id": "date-distance-reminders",
+    "claim": "Uses the date and distance reminders you set.",
+    "where": "Landing How it works, README",
+    "test": "npm test -- -t @claim:date-distance-reminders",
+    "sandbox": "unit fixtures cover date-only, distance-only, either-trigger, leap and non-leap month ends, and missing service mileage"
+  },
+  {
+    "id": "backup-validation",
+    "claim": "Rejects malformed backup records before restore.",
+    "where": "Backup screen",
+    "test": "npm test -- -t @claim:backup-validation",
+    "sandbox": "unit fixtures contain invalid dates, relations, and export metadata"
+  },
+  {
+    "id": "routed-history",
+    "claim": "History and backup have direct URLs with route titles and focus.",
+    "where": "Header navigation, sitemap",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:routed-history",
+    "sandbox": "fresh demo; navigate, reload, go back and forward, and assert URLs, titles, canonical URLs, and focused h1"
+  },
+  {
+    "id": "history-search-order",
+    "claim": "Searches service history across bikes in reverse date order.",
+    "where": "History screen, README",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:history-search-order",
+    "sandbox": "fresh demo; assert initial cross-bike order and search by bike and repair shop"
+  },
+  {
+    "id": "print-history",
+    "claim": "Opens a printable service history.",
+    "where": "History screen, backup screen, README",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:print-history",
+    "sandbox": "fresh demo; observe print invocation and assert print media keeps the history while hiding controls"
+  },
+  {
+    "id": "mobile-targets",
+    "claim": "Navigation and legal links have 44 pixel touch targets on phones.",
+    "where": "App, legal, and 404 routes",
+    "test": "npm run test:e2e -- --project=mobile --grep @claim:mobile-targets",
+    "sandbox": "390 by 844 viewport across demo, history, backup, legal, and 404 routes; assert target bounds and no horizontal overflow"
+  }
 ]
