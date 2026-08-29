@@ -1,62 +1,38 @@
-# Bike Service Timeline — polish 1 handoff
+# Bike Service Timeline — review 2 handoff
 
-- Work order: `bike-service-timeline-polish-1`
-- Repair commits: `5aae0f48816f4f28f34eb46b37e5d6ca7296b5f1`, `03849d4`, `90c733a`; evidence handoff: `91da2a0`
-- Live URL: <https://bike-service-timeline.sociobot.in>
-- Deployed: 2026-08-28 UTC via `/opt/fleet/lib/deploy-static.sh`
+- Work order: `bike-service-timeline-review-2`
+- Date: 2026-08-29 UTC
 
 ## Done
 
-The PWA now has a one-click `/demo` and `?demo=1` sample path with its own
-`demo:bike-service-timeline` IndexedDB database, realistic three-bike sample,
-persistent reset/start-real banner, claim registry, real history/backup/pass
-URLs, route title/focus announcements, complete metadata, common legal shell,
-and product-styled 404. It validates every imported record before replacing or
-merging data, clamps month-end reminders, and retains the latest known mileage.
+Performed the requested independent adversarial review. No product code was
+modified. Added `.factory/review-2.md` with fresh phone/desktop live evidence,
+copy audit, claim-command results, full earlier-finding recheck, routing/404
+checks, and final FAIL verdict.
 
-Static Web Apps configuration adds CSP, Permissions Policy, immutable hashed
-asset caching, MIME mappings, direct route rewrites, and 404 handling. The
-paper-workshop visual system, generated illustration, and local-first model
-remain intact. The 1200×630 social image is a crop derived from the existing
-product-owned generated workshop art.
-
-## Verification
-
-From a clean dependency install:
+## Verification performed
 
 ```sh
 npm ci
-npm test                         # 6 passed
-npm run build                    # dist/ produced; JS 45.91 KB raw / 14.46 KB gzip
-npm run test:e2e                 # 22 passed, 2 intentional skips
-npx tsc --noEmit                 # passed via build
+npm test
+npm run build
+# every exact command listed in .factory/claims.json
 ```
 
-Every command listed in `.factory/claims.json` was run. The two unit claim
-commands passed; all eight Playwright claim commands passed in both configured
-desktop and mobile projects. The browser suite includes offline reload,
-isolated demo/reset, export downloads, route history, mobile target sizes, and
-axe coverage.
+All commands exited successfully. A separate clean clone at
+`/tmp/bike-service-review-2.YrVpnr` also passed `npm test` (6 tests) and
+`npm run test:e2e` (22 passed, 2 intentional skips); the latter produces
+`dist/`.
 
-Cold live checks after the final deployment:
+Live checks used fresh Chromium contexts at 390 × 844 and 1440 × 1000, the
+production `/demo` flow, direct routes, response headers, request logging, and
+the production checkout endpoint.
 
-- `/demo`: title `Demo — Bike Service Timeline`, banner present, sample bike present, and no console errors.
-- `/?demo=1`: enters the same isolated sample; `/` stayed empty in the fresh context.
-- `/history?demo=1`: title `Service history — Bike Service Timeline`; focus moved to `#main`.
-- Live axe WCAG A/AA: **0 serious/critical** violations at 390px.
-- `/does-not-exist`: HTTP 404 with the designed product page.
-- Hashed JS: `Cache-Control: public, max-age=31536000, immutable`.
-- Manifest: `Content-Type: application/manifest+json`; headers include CSP, Permissions Policy, nosniff, and Referrer Policy.
-- Screenshots: `.factory/evidence/live-demo-desktop.png`, `.factory/evidence/live-demo-mobile.png`, and `.factory/evidence/live-404-mobile.png`.
+## Open blockers
 
-## Known external blocker
-
-The required production Sociobot checkout endpoint still returned HTTP 404 on
-2026-08-28:
-
-`https://api.sociobot.in/api/v1/products/bike-service-timeline/checkout`
-
-with `{"error":"enabled factory product","status":404}`. The application
-uses the required Sociobot URL and has no authority to enable/register that
-merchant product. Factory billing registration is required before claiming the
-US$19 purchase flow is live; this is the only unresolved acceptance item.
+1. Production Workshop Pass checkout returns HTTP 404.
+2. Demo mode reads/writes ordinary license `localStorage` and requests
+   `api.sociobot.in` when a real saved token exists.
+3. CSV and JSON-backup claim tests only verify filenames, not exported content.
+4. Several landing/README/pass promises lack claims/tests; 404 metadata and
+   shell consistency plus residual metaphor copy also remain.
