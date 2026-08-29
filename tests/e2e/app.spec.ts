@@ -104,7 +104,7 @@ test('keeps dialog focus contained and returns focus when closed', async ({ page
 test('sets complete metadata on app, legal, and 404 routes', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'chromium', 'Metadata is viewport-independent.');
   const routes = [
-    ['/', 'Bike Service Timeline — Track service across bikes', 'https://bike-service-timeline.sociobot.in/'],
+    ['/', 'Bike Service Timeline — Track service across all bikes', 'https://bike-service-timeline.sociobot.in/'],
     ['/demo', 'Demo — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/demo'],
     ['/history?demo=1', 'Service history — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/history'],
     ['/backup?demo=1', 'Backup and export — Bike Service Timeline', 'https://bike-service-timeline.sociobot.in/backup'],

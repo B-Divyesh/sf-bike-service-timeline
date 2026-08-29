@@ -76,3 +76,7 @@ and actions. No unit exceeds 22 words. No banned marketing word remains.
 | Repair business | repair shop |
 | Complete portable file | backup |
 | Tabular portable file | CSV |
+
+The landing h1, root title, and README opening are covered by the
+`multi-bike-history` claim. Date and distance reminders remain covered by the
+separate `date-distance-reminders` claim.

@@ -53,7 +53,7 @@ function routeMetadata(): { title: string; description: string; path: string } {
   if (isDemoMode() && view === 'bench') return { title: 'Demo — Bike Service Timeline', description: 'Try three sample bike histories without changing your records.', path: '/demo' };
   if (view === 'timeline') return { title: 'Service history — Bike Service Timeline', description: 'Search service entries across all your bikes and export the results.', path: '/history' };
   if (view === 'backup') return { title: 'Backup and export — Bike Service Timeline', description: 'Download, print, or restore your bike service history.', path: '/backup' };
-  return { title: 'Bike Service Timeline — Track service across bikes', description: 'Track service history and next reminders across every bike you maintain.', path: '/' };
+  return { title: 'Bike Service Timeline — Track service across all bikes', description: 'Track service history and next reminders across every bike you maintain.', path: '/' };
 }
 
 function navigate(target: View): void {

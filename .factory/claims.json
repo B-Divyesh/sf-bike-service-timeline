@@ -21,6 +21,13 @@
     "sandbox": "fresh browser context; assert every named sample bike and service, then inspect the real add-bike form"
   },
   {
+    "id": "multi-bike-history",
+    "claim": "Tracks service across all your bikes in one combined history.",
+    "where": "Landing h1, root title, README opening",
+    "test": "npm run test:e2e -- --project=chromium --grep @claim:multi-bike-history",
+    "sandbox": "fresh real-data browser context; add two bikes, log dated service on each, open All history, and assert both entries appear in reverse date order"
+  },
+  {
     "id": "offline-reload",
     "claim": "Works offline after the first visit.",
     "where": "Landing facts, Privacy notice, README",

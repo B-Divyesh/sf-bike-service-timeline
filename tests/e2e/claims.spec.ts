@@ -105,6 +105,46 @@ test('@claim:sample-content-and-onboarding shows three useful histories and star
   await expect(page.getByLabel('Notes')).toHaveValue('');
 });
 
+test('@claim:multi-bike-history combines real service entries from two bikes', async ({ page }) => {
+  const dateFor = (daysAgo: number) => {
+    const date = new Date();
+    date.setDate(date.getDate() - daysAgo);
+    return date.toISOString().slice(0, 10);
+  };
+  const addBike = async (name: string, first = false) => {
+    if (first) await page.getByRole('button', { name: 'Add your first bike' }).click();
+    else await page.getByRole('button', { name: 'Add bike', exact: true }).click();
+    await page.getByLabel('Bike name Required').fill(name);
+    await page.getByRole('dialog').getByRole('button', { name: 'Add bike', exact: true }).click();
+    await expect(page.getByRole('heading', { name })).toBeVisible();
+  };
+  const logService = async (bike: string, work: string, date: string) => {
+    await page.locator('.site-header').getByRole('button', { name: 'Log service', exact: true }).click();
+    const dialog = page.getByRole('dialog');
+    await dialog.getByLabel('Bike Required').selectOption({ label: bike });
+    await dialog.getByLabel('Service date Required').fill(date);
+    await dialog.getByLabel('What was done? Required').fill(work);
+    await dialog.getByRole('button', { name: 'Save service' }).click();
+    await expect(dialog).toHaveCount(0);
+  };
+
+  await page.goto('/');
+  await expect(page).toHaveTitle('Bike Service Timeline — Track service across all bikes');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText('Track service across all your bikes');
+  await addBike('Harbor Commuter', true);
+  await addBike('Cedar Gravel');
+  await logService('Harbor Commuter', 'Adjusted Harbor gears', dateFor(1));
+  await logService('Cedar Gravel', 'Installed Cedar brake pads', dateFor(0));
+
+  await page.getByRole('link', { name: 'All history' }).click();
+  await expect(page).toHaveURL(/\/history$/);
+  const entries = page.locator('.full-timeline > li');
+  await expect(entries).toHaveCount(2);
+  await expect(entries.locator('h2')).toHaveText(['Installed Cedar brake pads', 'Adjusted Harbor gears']);
+  await expect(entries.nth(0).locator('.entry-context strong')).toHaveText('Cedar Gravel');
+  await expect(entries.nth(1).locator('.entry-context strong')).toHaveText('Harbor Commuter');
+});
+
 test('@claim:offline-reload works after the first visit', async ({ page, context }) => {
   await page.goto('/demo');
   await page.waitForFunction(() => navigator.serviceWorker?.controller !== null);
