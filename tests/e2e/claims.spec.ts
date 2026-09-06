@@ -37,6 +37,12 @@ test('@claim:demo-isolation keeps sample records and license keys separate from 
     Object.assign(window, { __licenseReads: reads, __licenseWrites: writes });
   });
 
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Add your first bike' }).click();
+  await page.getByLabel('Bike name Required').fill('Real sentinel bike');
+  await page.getByRole('dialog').getByRole('button', { name: 'Add bike', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Real sentinel bike' })).toBeVisible();
+
   await page.goto('/?demo=1');
   await expect(page).toHaveURL(/\?demo=1$/);
   await expect(page.getByText('Demo — sample data, nothing is saved')).toBeVisible();
@@ -56,9 +62,12 @@ test('@claim:demo-isolation keeps sample records and license keys separate from 
   await page.getByRole('button', { name: 'Add bike' }).click();
   await page.getByLabel('Bike name Required').fill('Demo-only bike');
   await page.getByRole('dialog').getByRole('button', { name: 'Add bike', exact: true }).click();
+  await page.getByRole('button', { name: 'Reset demo' }).click();
+  await expect(page.getByText('Demo-only bike')).toHaveCount(0);
+  await expect(page.getByText('Demo — sample data, nothing is saved')).toBeVisible();
   await page.getByRole('button', { name: 'Start for real' }).click();
   await expect(page).toHaveURL('/');
-  await expect(page.getByRole('button', { name: 'Add your first bike' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Real sentinel bike' })).toBeVisible();
   await expect(page.getByText('Demo-only bike')).toHaveCount(0);
 
   await page.goto('/demo');
