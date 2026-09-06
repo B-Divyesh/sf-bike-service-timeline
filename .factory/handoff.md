@@ -7,7 +7,7 @@
 - Live URL: <https://bike-service-timeline.sociobot.in>
 - Runtime implementation: `b8d441ff74a58771ef2b01276d51550a1bb1daf5`
 - Final validation source: `c5a7dd488fa6b95a2eae2df3ae37ea55104b96b5` (test-only; its built runtime artifacts match the deployed implementation byte for byte)
-- Documentation and evidence commit: `ed0d8badf40f8d9a56357de7c0341ebf4c08a3d7`
+- Documentation and evidence commit: `ed0d8ba58712cb424702b629be66fe05058b825f`
 - Production deployment: `973d18a1-076c-4b0a-9803-cd00450e9d19`
 
 ## What changed
