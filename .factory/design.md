@@ -30,7 +30,9 @@ Light mode is the primary treatment; dark mode becomes an evening workshop.
 | edge | `#C9BFAE` | `#526158` | borders and cut edges |
 
 Status always includes words and an icon/shape; color never carries meaning
-alone. Paper noise is drawn with CSS, not an image payload.
+alone. The `Due soon` foreground uses workshop brown (`#825613`) in light mode
+and marigold (`#F4BF54`, 7.08:1 on the raised dark surface) in dark mode. Paper
+noise is drawn with CSS, not an image payload.
 
 ## Typography
 

@@ -12,6 +12,7 @@
   --pine-contrast: #fff;
   --spoke: #254f70;
   --marigold: #e6a327;
+  --due-soon: #825613;
   --rust: #a94732;
   --leaf: #2f7150;
   --edge: #c9bfae;
@@ -134,7 +135,7 @@ h3 { font-size: 1.35rem; }
 .due-list li { display: grid; grid-template-columns: 42px minmax(0, 1fr) auto 44px; align-items: center; gap: 12px; min-height: 76px; padding: 12px 4px; border-bottom: 1px solid var(--edge); }
 .due-mark { display: inline-grid; width: 34px; height: 34px; place-items: center; border: 2px solid currentColor; border-radius: 50%; font-weight: 900; }
 .due-mark.overdue, .status-word.overdue { color: var(--rust); }
-.due-mark.soon, .status-word.soon { color: #825613; }
+.due-mark.soon, .status-word.soon { color: var(--due-soon); }
 .due-mark.current, .status-word.current { color: var(--leaf); }
 .due-mark.unscheduled, .status-word.unscheduled { color: var(--muted); }
 .due-list li > div { display: flex; min-width: 0; flex-direction: column; }
@@ -188,7 +189,7 @@ input::placeholder, textarea::placeholder { color: #6c7a73; opacity: 1; }
 .file-drop input { max-width: 300px; margin-left: 20px; }
 .restore-panel fieldset { display: flex; gap: 28px; margin: 0 0 18px; padding: 0; border: 0; }
 .restore-panel legend { margin-bottom: 8px; font-weight: 800; }
-.restore-panel fieldset label { display: flex; align-items: center; gap: 8px; }
+.restore-panel fieldset label { display: flex; box-sizing: border-box; min-height: 44px; align-items: center; gap: 8px; padding: 10px 8px; cursor: pointer; }
 .restore-panel input[type="radio"] { width: 20px; min-height: 20px; }
 .microcopy { margin-top: 10px !important; font-size: 13px; }
 .form-error { min-height: 24px; margin: 10px 0 0; color: var(--rust) !important; font-weight: 700; }
@@ -252,7 +253,7 @@ footer p { margin: 3px 0 0; }
 .footer-links a { display: inline-flex; min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }
 
 @media (prefers-color-scheme: dark) {
-  :root { --canvas: #17221e; --surface: #223029; --surface-raised: #2b3a32; --ink: #f7f0de; --muted: #b8c6bc; --pine: #78d2b3; --pine-hover: #91dec3; --pine-contrast: #10251e; --spoke: #9ac8e8; --marigold: #f4bf54; --rust: #ff9c83; --leaf: #81c99e; --edge: #526158; --shadow: #0f1714; --focus: #f4bf54; }
+  :root { --canvas: #17221e; --surface: #223029; --surface-raised: #2b3a32; --ink: #f7f0de; --muted: #b8c6bc; --pine: #78d2b3; --pine-hover: #91dec3; --pine-contrast: #10251e; --spoke: #9ac8e8; --marigold: #f4bf54; --due-soon: #f4bf54; --rust: #ff9c83; --leaf: #81c99e; --edge: #526158; --shadow: #0f1714; --focus: #f4bf54; }
   .button.primary { box-shadow: 0 3px 0 #3e8069; }
   .status-chip.good { color: #c6f3d5; background: #294d38; }
   .status-chip.warn { color: #ffe2a8; background: #5a401e; }

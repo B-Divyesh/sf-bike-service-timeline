@@ -151,3 +151,35 @@ test('has no serious accessibility violations on product, legal, and 404 routes'
     expect(results.violations.filter(violation => ['serious', 'critical'].includes(violation.impact ?? '')), path).toEqual([]);
   }
 });
+
+test('keeps populated due-soon service information accessible in dark mode', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'chromium', 'One browser covers the shared color-scheme markup.');
+  await page.emulateMedia({ colorScheme: 'dark' });
+  await page.goto('/demo');
+  await expect(page.getByText('Due soon', { exact: true })).toBeVisible();
+  const results = await new AxeBuilder({ page: page as never }).withTags(['wcag2a', 'wcag2aa']).analyze();
+  expect(results.violations.filter(violation => ['serious', 'critical'].includes(violation.impact ?? ''))).toEqual([]);
+});
+
+test('keeps every visible backup form target usable on a phone', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name !== 'mobile', 'Phone target dimensions are measured in the mobile project.');
+  await page.goto('/backup?demo=1');
+  const undersizedTargets = await page.locator('main input, main select, main textarea, main button').evaluateAll(controls => {
+    const targets = [...new Set(controls.map(control => {
+      if (control instanceof HTMLInputElement && control.type === 'radio') return control.closest('label') ?? control;
+      if (control instanceof HTMLInputElement && control.type === 'file') return control.closest('.file-drop') ?? control;
+      return control;
+    }))];
+    return targets.map(target => {
+      const box = target.getBoundingClientRect();
+      return { name: target.textContent?.trim() || (target as HTMLInputElement).name || target.tagName, width: box.width, height: box.height };
+    }).filter(target => target.width < 44 || target.height < 44);
+  });
+  expect(undersizedTargets).toEqual([]);
+
+  const replaceOption = page.getByText('Replace this browser', { exact: true });
+  await replaceOption.click();
+  await expect(page.getByRole('radio', { name: 'Replace this browser' })).toBeChecked();
+  await page.getByText('Merge with this browser', { exact: true }).click();
+  await expect(page.getByRole('radio', { name: 'Merge with this browser' })).toBeChecked();
+});
