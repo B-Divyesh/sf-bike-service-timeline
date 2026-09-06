@@ -1,5 +1,28 @@
 # Track service across all your bikes — repair 1 handoff
 
+## Verification 2
+
+- Work order: `bike-service-timeline-verify-2`
+- Result: **PASS** — zero findings and zero untested public claims.
+- Runtime reviewed: `b8d441ff74a58771ef2b01276d51550a1bb1daf5`.
+- Documentation/report head: `374f97b625153b410d866df11816c94e6e721949`.
+- The independent report is [verification-2.md](./verification-2.md).
+
+Fresh 1440 px desktop and 390 px phone sessions identified the job (**Track
+service across all your bikes**), audience (people maintaining several bikes),
+and first action (**Try it with sample data**) before scrolling. A clean clone
+ran `npm ci`, `npm test` (9/9), `npm run build`, all 15 exact claim commands,
+the full live browser suite (38 passed, 8 intentional skips), and a moderate
+dependency audit (0 vulnerabilities). The live root, demo, legal pages, and
+designed 404 passed `verify-url.sh`; the live build bytes match the runtime
+candidate. Lighthouse mobile scored 100/100/100/100.
+
+The verifier independently confirmed that reset restores three shipped sample
+bikes and that leaving demo retains a real sentinel record while discarding
+demo edits. All earlier findings, including F-6-1 and F-6-2, remain closed;
+their current dispositions are recorded in the report. No backend-only health,
+tenant, restart, or rate-limit checks apply to this static local-first PWA.
+
 ## Result
 
 - Work order: `bike-service-timeline-repair-1`
